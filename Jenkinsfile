@@ -17,7 +17,7 @@ pipeline {
             }
         }
         stage('Docker Build') {
-            agent { docker { image: 'docker:latest', args: '-u root:root' } }
+            agent { docker { image 'docker:latest', args: '-u root:root' } }
             steps {
                 script {
                     def appName = "my-first-git-repo"
