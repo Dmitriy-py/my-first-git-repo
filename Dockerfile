@@ -15,6 +15,6 @@ WORKDIR /app
 
 COPY --from=builder /app/main .
 
-EXPOSE 8080  # Если ваше приложение слушает порт 8080
+EXPOSE 8080
 
 CMD ["./main"]
