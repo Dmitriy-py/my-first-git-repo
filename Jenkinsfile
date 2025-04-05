@@ -24,7 +24,7 @@ pipeline {
                     def imageName = "dmitriy-py/${appName}"
                     sh "docker build -t ${imageName} ."
                     sh "docker tag ${imageName} dmitriy-py/${appName}:latest"
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: 'my-dockerhub-cred', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login -u ${USERNAME} -p ${PASSWORD}"
                         sh "docker push dmitriy-py/${appName}:latest"
                     }
