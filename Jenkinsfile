@@ -1,32 +1,30 @@
 pipeline {
     agent any
     stages {
+        stage('Checkout') { // Я добавил этот stage, чтобы явно была видна операция checkout
+            steps {
+                git url: 'https://github.com/Dmitriy-py/my-first-git-repo.git', branch: 'main' // Замените на URL вашего репозитория
+            }
+        }
         stage('Build') {
             steps {
-                script {
-                    sh 'go build .'
-                }
+                sh 'go build -o myapp .' // Сборка Go-файла с именем "myapp"
             }
         }
-        stage('Test') {
+       stage('Upload to Nexus') {
+            agent any
             steps {
-                script {
-                    sh 'go test -v'
-                }
-            }
-        }
-        stage('Docker Build') {
-            steps {
-                script {
-                    def appName = "my-first-git-repo"
-                    def imageName = "dikdemon/${appName}"
-                    sh "docker build -t ${imageName} ."
-                    sh "docker tag ${imageName} dikdemon/${appName}:latest"
-                    withCredentials([usernamePassword(credentialsId: 'my-dockerhub-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh "docker login -u ${USERNAME} -p ${PASSWORD}"
-                        sh "docker push dikdemon/${appName}:latest"
-                    }
-                }
+                nexusArtifactUploader(
+                    nexusVersion: 'nexus3',
+                    nexusUrl: 'http://localhost:8081/', // Замените на URL вашего Nexus
+                    nexusRepositoryId: 'go-binaries',  // Замените на имя вашего raw-hosted репозитория
+                    groupId: 'com.example',       // Замените на ваш groupId (можно использовать любой)
+                    version: '1.0',               // Замените на вашу версию (можно использовать любую)
+                    artifactId: 'myapp',          // Имя вашего артефакта (совпадает с именем бинарника)
+                    classifier: '',
+                    artifact: 'myapp',             // Путь к бинарному файлу, относительно workspace Jenkins
+                    credentialsId: 'nexus-creds' // ID учетных данных Nexus, которые вы создали
+                )
             }
         }
     }
