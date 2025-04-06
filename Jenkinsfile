@@ -19,12 +19,12 @@ pipeline {
             steps {
                 script {
                     def appName = "my-first-git-repo"
-                    def imageName = "dmitriy-py/${appName}"
+                    def imageName = "dikdemon/${appName}"
                     sh "docker build -t ${imageName} ."
-                    sh "docker tag ${imageName} dmitriy-py/${appName}:latest"
+                    sh "docker tag ${imageName} dikdemon/${appName}:latest"
                     withCredentials([usernamePassword(credentialsId: 'my-dockerhub-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
                         sh "docker login -u ${USERNAME} -p ${PASSWORD}"
-                        sh "docker push dmitriy-py/${appName}:latest"
+                        sh "docker push dikdemon/${appName}:latest"
                     }
                 }
             }
